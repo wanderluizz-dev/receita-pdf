@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Receitas - Thalita Costa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(-20px); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .animate-slideIn {
+            animation: slideIn 0.3s ease;
+        }
+        
+        .animate-slideOut {
+            animation: slideOut 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #1b5e84;
+            box-shadow: 0 0 0 3px rgba(27, 94, 132, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 min-h-screen p-4 md:p-8">
+    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden animate-fadeIn">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-[#1b5e84] to-[#2d7ba8] p-8 md:p-12 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+            <div class="relative z-10">
+                <img src="src/images/logo.png" alt="Logo Thalita Costa" class="w-60 mx-auto mb-4" onerror="this.style.display='none'">
+                <p class="text-white/90 text-sm md:text-base font-light">MÉDICA VETERINÁRIA - CRMV-PB 03371</p>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <div class="p-6 md:p-10">
+            <!-- Dados do Responsável -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-[#1b5e84] mb-6 pb-3 border-b-2 border-[#d9c9b5]">
+                Dados do Responsável
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84]">Nome do Responsável *</label>
+                        <input type="text" id="responsavel" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Digite o nome completo">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84]">CPF</label>
+                        <input type="text" id="cpf" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="000.000.000-00">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados do Paciente -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-[#1b5e84] mb-6 pb-3 border-b-2 border-[#d9c9b5]">
+                Dados do Paciente
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84]">Nome do Paciente *</label>
+                        <input type="text" id="paciente" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Nome do pet">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84] mb-3">Espécie *</label>
+                        <div class="flex gap-6">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="especie" value="CANINO" checked 
+                                       class="w-5 h-5 text-[#1b5e84] focus:ring-[#1b5e84] cursor-pointer">
+                                <span class="text-gray-700">Canino</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="especie" value="FELINO" 
+                                       class="w-5 h-5 text-[#1b5e84] focus:ring-[#1b5e84] cursor-pointer">
+                                <span class="text-gray-700">Felino</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84]">Idade</label>
+                        <input type="text" id="idade" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Ex: 6 a">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84]">Peso</label>
+                        <input type="text" id="peso" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Ex: 4,1 kg">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84]">Raça</label>
+                        <input type="text" id="raca" 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Ex: SRD">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-[#1b5e84] mb-3">Sexo *</label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="sexo" value="MACHO" checked 
+                                       class="w-5 h-5 text-[#1b5e84] focus:ring-[#1b5e84] cursor-pointer">
+                                <span class="text-gray-700 text-sm">Macho</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="radio" name="sexo" value="FÊMEA" 
+                                       class="w-5 h-5 text-[#1b5e84] focus:ring-[#1b5e84] cursor-pointer">
+                                <span class="text-gray-700 text-sm">Fêmea</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medicamentos -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-[#1b5e84] mb-6 pb-3 border-b-2 border-[#d9c9b5]">
+                Medicamentos
+                </h2>
+                <div id="medicamentos-container" class="space-y-4"></div>
+                <button onclick="adicionarMedicamento()" 
+                        class="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
+                    <span class="text-2xl">+</span>
+                    <span>Adicionar Medicamento</span>
+                </button>
+            </div>
+
+            <!-- Informações Adicionais -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-[#1b5e84] mb-6 pb-3 border-b-2 border-[#d9c9b5]">
+                Informações Adicionais
+                </h2>
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-[#1b5e84] mb-2">Informações adicionais ou orientações</label>
+                    <textarea id="informacoes-adicionais" 
+                              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30 resize-y min-h-[120px]" 
+                              placeholder="Ex: Retorno em 15 dias, manter animal em repouso, observar reações adversas..."></textarea>
+                </div>
+            </div>
+
+            <!-- Data -->
+            <div class="mb-8">
+                <div class="max-w-xs">
+                    <label class="block text-sm font-medium text-[#1b5e84] mb-2">Data da Receita</label>
+                    <input type="date" id="data" 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30">
+                </div>
+            </div>
+
+            <!-- Botão Gerar PDF -->
+            <button onclick="gerarPDF()" 
+                    class="w-full bg-gradient-to-r from-[#1b5e84] to-[#2d7ba8] text-white font-bold text-lg py-5 px-8 rounded-xl transform hover:-translate-y-2 transition-all duration-300 shadow-2xl hover:shadow-3xl flex items-center justify-center gap-3">
+                <span class="text-2xl"></span>
+                <span>Gerar Receita em PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let medicamentoCount = 0;
+
+        // Definir data atual
+        document.getElementById('data').valueAsDate = new Date();
+
+        // Adicionar primeiro medicamento ao carregar
+        window.onload = function() {
+            adicionarMedicamento();
+        };
+
+        function adicionarMedicamento() {
+            medicamentoCount++;
+            const container = document.getElementById('medicamentos-container');
+            const card = document.createElement('div');
+            card.className = 'bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 hover:border-[#1b5e84] transition-all duration-300 hover:shadow-lg animate-slideIn';
+            card.id = `medicamento-${medicamentoCount}`;
+            
+            const removeButton = medicamentoCount > 1 ? 
+                `<button onclick="removerMedicamento(${medicamentoCount})" 
+                         class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                    Remover
+                </button>` : '';
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-bold text-[#1b5e84]">Medicamento ${medicamentoCount}</span>
+                    ${removeButton}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Nome do Medicamento</label>
+                        <input type="text" class="med-nome w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Ex: Xarope imunomodulador">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Unidade</label>
+                        <input type="text" class="med-unidade w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
+                               placeholder="Ex: 1fr">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Instruções de Administração</label>
+                    <textarea class="med-admin w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30 resize-y min-h-[100px]" 
+                              placeholder="Ex: Administrar 1 ml, a cada 12 horas, durante 15 dias..."></textarea>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        }
+
+        function removerMedicamento(id) {
+            const element = document.getElementById(`medicamento-${id}`);
+            element.classList.add('animate-slideOut');
+            setTimeout(() => {
+                element.remove();
+                atualizarNumerosMedicamentos();
+            }, 300);
+        }
+
+        function atualizarNumerosMedicamentos() {
+            const cards = document.querySelectorAll('[id^="medicamento-"]');
+            cards.forEach((card, index) => {
+                const numberSpan = card.querySelector('.text-lg.font-bold');
+                if (numberSpan) {
+                    numberSpan.textContent = `Medicamento ${index + 1}`;
+                }
+            });
+        }
+
+        function formatarData(dataStr) {
+            const data = new Date(dataStr + 'T00:00:00');
+            const dia = data.getDate();
+            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 
+                           'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const mes = meses[data.getMonth()];
+            const ano = data.getFullYear();
+            return `${dia} de ${mes} de ${ano}`;
+        }
+
+        function loadImageAsBase64(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    
+                    // Definir dimensões otimizadas para A5 (148x210mm a 150 DPI)
+                    const targetWidth = 1748;  // 148mm * 300 DPI / 25.4
+                    const targetHeight = 2480; // 210mm * 300 DPI / 25.4
+                    
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+                    
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Desenhar imagem redimensionada
+                    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                    
+                    // Comprimir imagem (qualidade 0.9 = boa qualidade com tamanho reduzido)
+                    resolve(canvas.toDataURL('image/jpeg', 1));
+                };
+                img.onerror = () => resolve(null);
+                img.src = url;
+            });
+        }
+
+        async function gerarPDF() {
+            const { jsPDF } = window.jspdf;
+            
+            // Criar PDF no formato A5 (148 x 210 mm)
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a5'
+            });
+
+            // Coletar dados do formulário
+            const dados = {
+                responsavel: document.getElementById('responsavel').value || '',
+                cpf: document.getElementById('cpf').value || '',
+                paciente: document.getElementById('paciente').value || '',
+                especie: document.querySelector('input[name="especie"]:checked').value,
+                idade: document.getElementById('idade').value || '',
+                peso: document.getElementById('peso').value || '',
+                raca: document.getElementById('raca').value || '',
+                sexo: document.querySelector('input[name="sexo"]:checked').value,
+                data: document.getElementById('data').value,
+                informacoesAdicionais: document.getElementById('informacoes-adicionais').value || ''
+            };
+
+            // Coletar medicamentos
+            const medicamentos = [];
+            document.querySelectorAll('[id^="medicamento-"]').forEach(card => {
+                const nome = card.querySelector('.med-nome').value;
+                const unidade = card.querySelector('.med-unidade').value;
+                const admin = card.querySelector('.med-admin').value;
+                if (nome || unidade || admin) {
+                    medicamentos.push({ nome, unidade, admin });
+                }
+            });
+
+            const pageWidth = pdf.internal.pageSize.getWidth(); // 148mm
+            const pageHeight = pdf.internal.pageSize.getHeight(); // 210mm
+
+           // Carregar e adicionar imagem de fundo (otimizada)
+            const bgImage = await loadImageAsBase64('src/bg/receituario_bg_site.jpg');
+            if (bgImage) {
+                pdf.addImage(bgImage, 'JPEG', 0, 0, pageWidth, pageHeight);
+            }
+
+            // Dados do Responsável e CPF (ajustados para A5)
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('RESPONSÁVEL:', 10, 40.5);
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(dados.responsavel, 32, 40.5);
+
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('CPF:', 90, 40.5);
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(dados.cpf, 98, 40.5);
+
+            // Linha divisória
+            pdf.setDrawColor(220, 220, 220);
+            pdf.line(10, 43, pageWidth - 10, 43);
+
+            // Dados do Paciente (ajustados para A5)
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('PACIENTE:', 10, 48.5);
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(dados.paciente, 26, 48.5);
+
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('ESPÉCIE:', 75, 48.5);
+            
+            // Checkbox espécie (ajustado para A5)
+            pdf.setDrawColor(27, 94, 132);
+            pdf.setLineWidth(0.3);
+            pdf.rect(93, 46.5, 2, 2);
+            if (dados.especie === 'CANINO') {
+                pdf.setFillColor(27, 94, 132);
+                pdf.rect(93.3, 46.8, 1.4, 1.4, 'F');
+            }
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('CANINO', 97, 48.5);
+
+            pdf.rect(113, 46.5, 2, 2);
+            if (dados.especie === 'FELINO') {
+                pdf.setFillColor(27, 94, 132);
+                pdf.rect(113.3, 46.8, 1.4, 1.4, 'F');
+            }
+            pdf.text('FELINO', 117, 48.5);
+
+            // Linha divisória
+            pdf.setLineWidth(0.2);
+            pdf.line(10, 51, pageWidth - 10, 51);
+
+            // Idade, Peso, Raça, Sexo (ajustados para A5)
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('IDADE:', 10, 56.5);
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(dados.idade, 21, 56.5);
+
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('PESO:', 38, 56.5);
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(dados.peso, 47, 56.5);
+
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('RAÇA:', 65, 56.5);
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(dados.raca, 75, 56.5);
+
+            pdf.setTextColor(27, 94, 132);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text('SEXO:', 90, 56.5);
+            
+            // Checkbox sexo (ajustado para A5)
+            pdf.setLineWidth(0.3);
+            pdf.rect(102, 54.5, 2, 2);
+            if (dados.sexo === 'MACHO') {
+                pdf.setFillColor(27, 94, 132);
+                pdf.rect(102.3, 54.8, 1.4, 1.4, 'F');
+            }
+            pdf.setTextColor(60, 60, 60);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text('MACHO', 106, 56.5);
+
+            pdf.rect(120, 54.5, 2, 2);
+            if (dados.sexo === 'FÊMEA') {
+                pdf.setFillColor(27, 94, 132);
+                pdf.rect(120.3, 54.8, 1.4, 1.4, 'F');
+            }
+            pdf.text('FÊMEA', 124, 56.5);
+
+            // Linha divisória
+            pdf.setLineWidth(0.2);
+            pdf.line(10, 59, pageWidth - 10, 59);
+
+            // Uso Oral (ajustado para A5)
+            pdf.setFontSize(8);
+            pdf.setTextColor(60, 60, 60);
+            pdf.text('Uso Oral', pageWidth / 2, 70.5, { align: 'center' });
+
+            // Medicamentos - ajustado para A5
+            let yPos = 80.5;
+            const maxWidth = 118; // Largura máxima para A5
+            
+            medicamentos.forEach((med, index) => {
+                if (med.nome || med.unidade || med.admin) {
+                    pdf.setFontSize(8);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setTextColor(0, 0, 0);
+                    
+                    // Número do medicamento
+                    pdf.text(`${index + 1}.`, 10, yPos);
+
+                    // Nome e unidade do medicamento
+                    let nomeTexto = med.nome || '';
+                    if (med.unidade) {
+                        // Adiciona pontos e unidade
+                        const espacoDisponivel = maxWidth - pdf.getTextWidth(nomeTexto) - pdf.getTextWidth(med.unidade);
+                        const numPontos = Math.floor(espacoDisponivel / pdf.getTextWidth('.'));
+                        const pontos = '.'.repeat(Math.max(0, numPontos));
+                        nomeTexto = `${nomeTexto} ${pontos} ${med.unidade}`;
+                    }
+                    pdf.text(nomeTexto, 14, yPos);
+
+                    // Instruções de administração
+                    pdf.setFont('helvetica', 'normal');
+                    if (med.admin) {
+                        yPos += 3.5;
+                        const lines = pdf.splitTextToSize(med.admin, maxWidth);
+                        pdf.text(lines, 14, yPos);
+                        yPos += (lines.length * 3.5);
+                    }
+
+                    yPos += 6;
+                }
+            });
+
+            // Informações Adicionais (se houver)
+            if (dados.informacoesAdicionais) {
+                yPos += 5;
+                pdf.setFontSize(7);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(27, 94, 132);
+                pdf.text('Informações Adicionais:', 10, yPos);
+                
+                yPos += 4;
+                pdf.setFontSize(8);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setTextColor(0, 0, 0);
+                const infoLines = pdf.splitTextToSize(dados.informacoesAdicionais, maxWidth);
+                pdf.text(infoLines, 10, yPos);
+            }
+
+            // Data e Assinatura (ajustado para A5)
+            pdf.setFontSize(7);
+            pdf.setTextColor(60, 60, 60);
+            const dataFormatada = formatarData(dados.data);
+            
+            // Posicionar no canto inferior direito
+            pdf.text(dataFormatada, pageWidth - 8, pageHeight - 42, { align: 'right' });
+            pdf.text('João Pessoa, Paraíba.', pageWidth - 8, pageHeight - 39, { align: 'right' });
+
+            pdf.setFontSize(7);
+            pdf.text('Thalita Costa de Melo', pageWidth - 8, pageHeight - 32, { align: 'right' });
+            pdf.setFontSize(7);
+            pdf.text('Médica Veterinária', pageWidth - 8, pageHeight - 29, { align: 'right' });
+            pdf.text('CRMV-PB 03371', pageWidth - 8, pageHeight - 26, { align: 'right' });
+
+            // Salvar PDF
+            const nomeArquivo = `receita_${dados.paciente.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;
+            pdf.save(nomeArquivo);
+        }
+    </script>
+</body>
+</html>
