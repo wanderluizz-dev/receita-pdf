@@ -26,6 +26,16 @@
             from { opacity: 1; transform: translateX(0); }
             to { opacity: 0; transform: translateX(-20px); }
         }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
         
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-in;
@@ -38,15 +48,71 @@
         .animate-slideOut {
             animation: slideOut 0.3s ease;
         }
+
+        .modal-overlay {
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            animation: modalSlideIn 0.3s ease;
+        }
         
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #1b5e84;
             box-shadow: 0 0 0 3px rgba(27, 94, 132, 0.1);
         }
+
+        .modal-overlay {
+            backdrop-filter: blur(8px);
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 min-h-screen p-4 md:p-8">
+
+    <!-- Modal para Adicionar Seção -->
+    <div id="modal-secao" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0 bg-black/50" onclick="fecharModal()"></div>
+        <div class="modal-content relative bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 transform">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-4">
+                    <span class="text-3xl">📋</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Nova Seção de Medicamentos</h3>
+                <p class="text-gray-600">Digite o tipo de uso dos medicamentos</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Título da Seção</label>
+                    <input type="text" 
+                           id="input-titulo-secao" 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl text-lg transition-all duration-300 hover:border-blue-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100" 
+                           placeholder="Ex: Uso Oral, Uso Oftalmológico, Uso Tópico..."
+                           onkeypress="if(event.key === 'Enter') confirmarSecao()">
+                </div>
+                
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                    <p class="text-sm text-blue-800 flex items-start gap-2">
+                        <span class="text-lg">💡</span>
+                        <span><strong>Dica:</strong> Use títulos como "Uso Oral", "Uso Oftalmológico", "Uso Tópico", "Uso Auricular", etc.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-8">
+                <button onclick="fecharModal()" 
+                        class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-xl transition-all duration-300 transform hover:scale-105">
+                    Cancelar
+                </button>
+                <button onclick="confirmarSecao()" 
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Criar Seção
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden animate-fadeIn">
         <!-- Header -->
         <div class="bg-gradient-to-r from-[#1b5e84] to-[#2d7ba8] p-8 md:p-12 text-center relative overflow-hidden">
@@ -146,17 +212,26 @@
                 </div>
             </div>
 
-            <!-- Medicamentos -->
+            <!-- Medicamentos por Seções -->
             <div class="mb-8">
                 <h2 class="text-2xl font-semibold text-[#1b5e84] mb-6 pb-3 border-b-2 border-[#d9c9b5]">
                 Medicamentos
                 </h2>
-                <div id="medicamentos-container" class="space-y-4"></div>
-                <button onclick="adicionarMedicamento()" 
-                        class="w-full mt-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
-                    <span class="text-2xl">+</span>
-                    <span>Adicionar Medicamento</span>
-                </button>
+                <div id="secoes-container" class="space-y-6"></div>
+                
+                <!-- Botões de Adicionar -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <button onclick="adicionarMedicamento()" 
+                            class="bg-gradient-to-r from-green-500 to-emerald-500 text-white font-medium py-4 px-6 rounded-xl hover:from-green-600 hover:to-emerald-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
+                        <span class="text-2xl">+</span>
+                        <span>Adicionar Medicamento</span>
+                    </button>
+                    <button onclick="abrirModal()" 
+                            class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium py-4 px-6 rounded-xl hover:from-blue-600 hover:to-indigo-600 transform hover:-translate-y-1 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3">
+                        <span class="text-2xl">+</span>
+                        <span>Adicionar Seção</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Informações Adicionais -->
@@ -174,7 +249,7 @@
 
             <!-- Data -->
             <div class="mb-8">
-                <div class="max-w-xs">
+                <div class="max-w-full md:max-w-xs">
                     <label class="block text-sm font-medium text-[#1b5e84] mb-2">Data da Receita</label>
                     <input type="date" id="data" 
                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30">
@@ -191,33 +266,108 @@
     </div>
 
     <script>
-        let medicamentoCount = 0;
+        let secaoCount = 0;
+        let medicamentoGlobalCount = 0;
+        let ultimaSecaoId = null;
+
 
         // Definir data atual
         document.getElementById('data').valueAsDate = new Date();
 
-        // Adicionar primeiro medicamento ao carregar
+        // Adicionar primeira seção ao carregar
         window.onload = function() {
-            adicionarMedicamento();
+            adicionarSecaoComTitulo('Uso Oral');
         };
 
-        function adicionarMedicamento() {
-            medicamentoCount++;
-            const container = document.getElementById('medicamentos-container');
-            const card = document.createElement('div');
-            card.className = 'bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 hover:border-[#1b5e84] transition-all duration-300 hover:shadow-lg animate-slideIn';
-            card.id = `medicamento-${medicamentoCount}`;
+        function abrirModal() {
+            const modal = document.getElementById('modal-secao');
+            const input = document.getElementById('input-titulo-secao');
+            modal.classList.remove('hidden');
+            input.value = '';
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById('modal-secao');
+            modal.classList.add('hidden');
+        }
+
+        function confirmarSecao() {
+            const input = document.getElementById('input-titulo-secao');
+            const titulo = input.value.trim();
             
-            const removeButton = medicamentoCount > 1 ? 
-                `<button onclick="removerMedicamento(${medicamentoCount})" 
-                         class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">
-                    Remover
-                </button>` : '';
+            if (!titulo) {
+                input.classList.add('border-red-500');
+                input.focus();
+                return;
+            }
+            
+            adicionarSecaoComTitulo(titulo);
+            fecharModal();
+        }
+
+        function adicionarSecaoComTitulo(titulo) {
+            secaoCount++;
+            const secaoId = `secao-${secaoCount}`;
+            ultimaSecaoId = secaoId;
+            
+            const container = document.getElementById('secoes-container');
+            const secaoDiv = document.createElement('div');
+            secaoDiv.className = 'bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200 animate-slideIn';
+            secaoDiv.id = secaoId;
+            
+            secaoDiv.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <input type="text" 
+                           class="secao-titulo text-xl font-bold text-[#1b5e84] bg-transparent border-2 border-transparent hover:border-blue-300 focus:border-blue-500 rounded-lg px-3 py-2 transition-all duration-300 flex-1 mr-4" 
+                           value="${titulo}"
+                           placeholder="Título da seção">
+                    ${secaoCount > 1 ? `<button onclick="removerSecao('${secaoId}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">Remover Seção</button>` : ''}
+                </div>
+                <div class="medicamentos-secao space-y-4" data-secao="${secaoId}"></div>
+            `;
+            
+            container.appendChild(secaoDiv);
+        }
+
+        function removerSecao(secaoId) {
+            const element = document.getElementById(secaoId);
+            element.classList.add('animate-slideOut');
+            setTimeout(() => {
+                element.remove();
+                // Atualizar última seção ativa
+                const secoes = document.querySelectorAll('[id^="secao-"]');
+                if (secoes.length > 0) {
+                    ultimaSecaoId = secoes[secoes.length - 1].id;
+                }
+            }, 300);
+        }
+
+        function adicionarMedicamento() {
+            // Verificar se existe pelo menos uma seção
+            if (!ultimaSecaoId) {
+                alert('Adicione uma seção primeiro!');
+                return;
+            }
+            
+            medicamentoGlobalCount++;
+            const medicamentoId = `medicamento-${medicamentoGlobalCount}`;
+            
+            // Adicionar à última seção
+            const container = document.querySelector(`#${ultimaSecaoId} .medicamentos-secao`);
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white p-6 rounded-xl border-2 border-gray-200 hover:border-[#1b5e84] transition-all duration-300 hover:shadow-lg animate-slideIn';
+            card.id = medicamentoId;
+            
+            const medicamentosNaSecao = container.querySelectorAll('[id^="medicamento-"]').length;
             
             card.innerHTML = `
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-lg font-bold text-[#1b5e84]">Medicamento ${medicamentoCount}</span>
-                    ${removeButton}
+                    <span class="text-lg font-bold text-[#1b5e84]">Medicamento ${medicamentosNaSecao + 1}</span>
+                    <button onclick="removerMedicamento('${medicamentoId}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                        Remover
+                    </button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="space-y-2">
@@ -228,7 +378,7 @@
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-700">Unidade</label>
                         <input type="text" class="med-unidade w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
-                               placeholder="Ex: 1fr">
+                               placeholder="Ex: 01 cx">
                     </div>
                 </div>
                 <div class="space-y-2">
@@ -239,21 +389,26 @@
             `;
             
             container.appendChild(card);
+            atualizarNumerosMedicamentosNaSecao(ultimaSecaoId);
         }
 
         function removerMedicamento(id) {
-            const element = document.getElementById(`medicamento-${id}`);
+            const element = document.getElementById(id);
+            const secaoContainer = element.closest('.medicamentos-secao');
+            const secaoId = secaoContainer.dataset.secao;
+            
             element.classList.add('animate-slideOut');
             setTimeout(() => {
                 element.remove();
-                atualizarNumerosMedicamentos();
+                atualizarNumerosMedicamentosNaSecao(secaoId);
             }, 300);
         }
 
-        function atualizarNumerosMedicamentos() {
-            const cards = document.querySelectorAll('[id^="medicamento-"]');
-            cards.forEach((card, index) => {
-                const numberSpan = card.querySelector('.text-lg.font-bold');
+        function atualizarNumerosMedicamentosNaSecao(secaoId) {
+            const secao = document.querySelector(`#${secaoId} .medicamentos-secao`);
+            const medicamentos = secao.querySelectorAll('[id^="medicamento-"]');
+            medicamentos.forEach((med, index) => {
+                const numberSpan = med.querySelector('.text-lg.font-bold');
                 if (numberSpan) {
                     numberSpan.textContent = `Medicamento ${index + 1}`;
                 }
@@ -321,14 +476,24 @@
                 informacoesAdicionais: document.getElementById('informacoes-adicionais').value || ''
             };
 
-            // Coletar medicamentos
-            const medicamentos = [];
-            document.querySelectorAll('[id^="medicamento-"]').forEach(card => {
-                const nome = card.querySelector('.med-nome').value;
-                const unidade = card.querySelector('.med-unidade').value;
-                const admin = card.querySelector('.med-admin').value;
-                if (nome || unidade || admin) {
-                    medicamentos.push({ nome, unidade, admin });
+            // Coletar medicamentos por seções
+            const secoes = [];
+            document.querySelectorAll('[id^="secao-"]').forEach(secaoDiv => {
+                const tituloInput = secaoDiv.querySelector('.secao-titulo');
+                const titulo = tituloInput ? tituloInput.value : 'Uso Oral';
+                
+                const medicamentos = [];
+                secaoDiv.querySelectorAll('[id^="medicamento-"]').forEach(card => {
+                    const nome = card.querySelector('.med-nome').value;
+                    const unidade = card.querySelector('.med-unidade').value;
+                    const admin = card.querySelector('.med-admin').value;
+                    if (nome || unidade || admin) {
+                        medicamentos.push({ nome, unidade, admin });
+                    }
+                });
+                
+                if (medicamentos.length > 0 || titulo) {
+                    secoes.push({ titulo, medicamentos });
                 }
             });
 
@@ -372,7 +537,7 @@
 
             pdf.setTextColor(27, 94, 132);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('ESPÉCIE:', 75, 48.5);
+            pdf.text('ESPÉCIE:', 77, 48.5);
             
             // Checkbox espécie (ajustado para A5)
             pdf.setDrawColor(27, 94, 132);
@@ -403,25 +568,25 @@
             pdf.text('IDADE:', 10, 56.5);
             pdf.setTextColor(60, 60, 60);
             pdf.setFont('helvetica', 'normal');
-            pdf.text(dados.idade, 21, 56.5);
+            pdf.text(dados.idade, 20, 56.5);
 
             pdf.setTextColor(27, 94, 132);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('PESO:', 38, 56.5);
+            pdf.text('PESO:', 36, 56.5);
             pdf.setTextColor(60, 60, 60);
             pdf.setFont('helvetica', 'normal');
-            pdf.text(dados.peso, 47, 56.5);
+            pdf.text(dados.peso, 45, 56.5);
 
             pdf.setTextColor(27, 94, 132);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('RAÇA:', 65, 56.5);
+            pdf.text('RAÇA:', 60, 56.5);
             pdf.setTextColor(60, 60, 60);
             pdf.setFont('helvetica', 'normal');
-            pdf.text(dados.raca, 75, 56.5);
+            pdf.text(dados.raca, 70, 56.5);
 
             pdf.setTextColor(27, 94, 132);
             pdf.setFont('helvetica', 'bold');
-            pdf.text('SEXO:', 90, 56.5);
+            pdf.text('SEXO:', 91, 56.5);
             
             // Checkbox sexo (ajustado para A5)
             pdf.setLineWidth(0.3);
@@ -445,52 +610,73 @@
             pdf.setLineWidth(0.2);
             pdf.line(10, 59, pageWidth - 10, 59);
 
-            // Uso Oral (ajustado para A5)
-            pdf.setFontSize(8);
-            pdf.setTextColor(60, 60, 60);
-            pdf.text('Uso Oral', pageWidth / 2, 70.5, { align: 'center' });
-
-            // Medicamentos - ajustado para A5
-            let yPos = 80.5;
-            const maxWidth = 118; // Largura máxima para A5
+            // Medicamentos por Seções - ajustado para A5
+            let yPos = 70.5;
+            const maxWidth = 120; // Largura máxima para A5
             
-            medicamentos.forEach((med, index) => {
-                if (med.nome || med.unidade || med.admin) {
-                    pdf.setFontSize(8);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setTextColor(0, 0, 0);
-                    
-                    // Número do medicamento
-                    pdf.text(`${index + 1}.`, 10, yPos);
+            secoes.forEach((secao, secaoIndex) => {
+                // Verificar se há espaço suficiente, senão adicionar nova página
+                if (yPos > pageHeight - 60) {
+                    pdf.addPage();
+                    yPos = 20;
+                }
+                
+                // Título da Seção
+                pdf.setFontSize(9);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setTextColor(0, 0, 0);
+                pdf.text(secao.titulo, pageWidth / 2, yPos, { align: 'center' });
+                yPos += 7;
+                
+                // Medicamentos da seção
+                secao.medicamentos.forEach((med, index) => {
+                    if (med.nome || med.unidade || med.admin) {
+                        // Verificar espaço antes de adicionar medicamento
+                        if (yPos > pageHeight - 40) {
+                            pdf.addPage();
+                            yPos = 20;
+                        }
+                        
+                        pdf.setFontSize(8);
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setTextColor(0, 0, 0);
+                        
+                        // Número do medicamento
+                        pdf.text(`${index + 1}.`, 10, yPos);
 
-                    // Nome e unidade do medicamento
-                    let nomeTexto = med.nome || '';
-                    if (med.unidade) {
-                        // Adiciona pontos e unidade
-                        const espacoDisponivel = maxWidth - pdf.getTextWidth(nomeTexto) - pdf.getTextWidth(med.unidade);
-                        const numPontos = Math.floor(espacoDisponivel / pdf.getTextWidth('.'));
-                        const pontos = '.'.repeat(Math.max(0, numPontos));
-                        nomeTexto = `${nomeTexto} ${pontos} ${med.unidade}`;
+                        // Nome e unidade do medicamento
+                        let nomeTexto = med.nome || '';
+                        if (med.unidade) {
+                            const espacoDisponivel = maxWidth - pdf.getTextWidth(nomeTexto) - pdf.getTextWidth(med.unidade);
+                            const numPontos = Math.floor(espacoDisponivel / pdf.getTextWidth('.'));
+                            const pontos = '.'.repeat(Math.max(0, numPontos));
+                            nomeTexto = `${nomeTexto} ${pontos} ${med.unidade}`;
+                        }
+                        pdf.text(nomeTexto, 14, yPos);
+
+                        // Instruções de administração
+                        pdf.setFont('helvetica', 'normal');
+                        if (med.admin) {
+                            yPos += 3.5;
+                            const lines = pdf.splitTextToSize(med.admin, maxWidth);
+                            pdf.text(lines, 14, yPos);
+                            yPos += (lines.length * 3.5);
+                        }
+
+                        yPos += 6;
                     }
-                    pdf.text(nomeTexto, 14, yPos);
-
-                    // Instruções de administração
-                    pdf.setFont('helvetica', 'normal');
-                    if (med.admin) {
-                        yPos += 3.5;
-                        const lines = pdf.splitTextToSize(med.admin, maxWidth);
-                        pdf.text(lines, 14, yPos);
-                        yPos += (lines.length * 3.5);
-                    }
-
-                    yPos += 6;
+                });
+                
+                // Espaço extra entre seções
+                if (secaoIndex < secoes.length - 1) {
+                    yPos += 3;
                 }
             });
 
             // Informações Adicionais (se houver)
             if (dados.informacoesAdicionais) {
                 yPos += 5;
-                pdf.setFontSize(7);
+                pdf.setFontSize(8);
                 pdf.setFont('helvetica', 'bold');
                 pdf.setTextColor(27, 94, 132);
                 pdf.text('Informações Adicionais:', 10, yPos);
