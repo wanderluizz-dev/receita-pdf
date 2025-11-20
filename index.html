@@ -68,7 +68,7 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 min-h-screen p-4 md:p-8">
+<body class="md:bg-gradient-to-br md:from-gray-100 md:via-gray-200 md:to-gray-300 md:min-h-screen md:p-8">
 
     <!-- Modal para Adicionar Seção -->
     <div id="modal-secao" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -113,7 +113,7 @@
         </div>
     </div>
 
-    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden animate-fadeIn">
+    <div class="md:max-w-5xl mx-auto bg-white md:rounded-3xl md:shadow-2xl overflow-hidden animate-fadeIn">
         <!-- Header -->
         <div class="bg-gradient-to-r from-[#1b5e84] to-[#2d7ba8] p-8 md:p-12 text-center relative overflow-hidden">
             <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
@@ -313,13 +313,13 @@
             
             const container = document.getElementById('secoes-container');
             const secaoDiv = document.createElement('div');
-            secaoDiv.className = 'bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200 animate-slideIn';
+            secaoDiv.className = 'bg-gradient-to-r from-blue-50 to-indigo-50 md:p-2 rounded-2xl border-2 border-blue-200 animate-slideIn';
             secaoDiv.id = secaoId;
             
             secaoDiv.innerHTML = `
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 mx-4">
                     <input type="text" 
-                           class="secao-titulo text-xl font-bold text-[#1b5e84] bg-transparent border-2 border-transparent hover:border-blue-300 focus:border-blue-500 rounded-lg px-3 py-2 transition-all duration-300 w-full sm:flex-1" 
+                           class="secao-titulo text-xl font-bold text-[#1b5e84] bg-transparent border-2 border-transparent hover:border-blue-300 focus:border-blue-500 rounded-lg py-2 transition-all duration-300 w-full sm:flex-1" 
                            value="${titulo}"
                            placeholder="Título da seção">
                     ${secaoCount > 1 ? `<button onclick="removerSecao('${secaoId}')" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 whitespace-nowrap">Remover Seção</button>` : ''}
