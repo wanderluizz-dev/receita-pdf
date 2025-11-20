@@ -317,12 +317,12 @@
             secaoDiv.id = secaoId;
             
             secaoDiv.innerHTML = `
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                     <input type="text" 
-                           class="secao-titulo text-xl font-bold text-[#1b5e84] bg-transparent border-2 border-transparent hover:border-blue-300 focus:border-blue-500 rounded-lg px-3 py-2 transition-all duration-300 flex-1 mr-4" 
+                           class="secao-titulo text-xl font-bold text-[#1b5e84] bg-transparent border-2 border-transparent hover:border-blue-300 focus:border-blue-500 rounded-lg px-3 py-2 transition-all duration-300 w-full sm:flex-1" 
                            value="${titulo}"
                            placeholder="Título da seção">
-                    ${secaoCount > 1 ? `<button onclick="removerSecao('${secaoId}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">Remover Seção</button>` : ''}
+                    ${secaoCount > 1 ? `<button onclick="removerSecao('${secaoId}')" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 whitespace-nowrap">Remover Seção</button>` : ''}
                 </div>
                 <div class="medicamentos-secao space-y-4" data-secao="${secaoId}"></div>
             `;
@@ -335,7 +335,6 @@
             element.classList.add('animate-slideOut');
             setTimeout(() => {
                 element.remove();
-                // Atualizar última seção ativa
                 const secoes = document.querySelectorAll('[id^="secao-"]');
                 if (secoes.length > 0) {
                     ultimaSecaoId = secoes[secoes.length - 1].id;
@@ -344,7 +343,6 @@
         }
 
         function adicionarMedicamento() {
-            // Verificar se existe pelo menos uma seção
             if (!ultimaSecaoId) {
                 alert('Adicione uma seção primeiro!');
                 return;
@@ -352,8 +350,6 @@
             
             medicamentoGlobalCount++;
             const medicamentoId = `medicamento-${medicamentoGlobalCount}`;
-            
-            // Adicionar à última seção
             const container = document.querySelector(`#${ultimaSecaoId} .medicamentos-secao`);
             
             const card = document.createElement('div');
@@ -363,9 +359,9 @@
             const medicamentosNaSecao = container.querySelectorAll('[id^="medicamento-"]').length;
             
             card.innerHTML = `
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                     <span class="text-lg font-bold text-[#1b5e84]">Medicamento ${medicamentosNaSecao + 1}</span>
-                    <button onclick="removerMedicamento('${medicamentoId}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">
+                    <button onclick="removerMedicamento('${medicamentoId}')" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105">
                         Remover
                     </button>
                 </div>
@@ -378,7 +374,7 @@
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-gray-700">Unidade</label>
                         <input type="text" class="med-unidade w-full px-4 py-3 border-2 border-gray-200 rounded-xl transition-all duration-300 hover:border-[#1b5e84]/30" 
-                               placeholder="Ex: 01 cx">
+                               placeholder="Ex: 50 ml">
                     </div>
                 </div>
                 <div class="space-y-2">
